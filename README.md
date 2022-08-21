@@ -14,7 +14,9 @@ https://pleasanter.org/manual/getting-started-pleasanter-ubuntu
 
 #### 使い方
 - Ubuntu Server 20.04をセットアップし、Ansibleをインストール
-｀sudo apt install ansible｀
+```
+sudo apt install ansible
+```
 - 任意のディレクトリに"pleasanter_ansible"のファイルを用意する
 - main.ymlの内容を適宜編集
 pleasanterのバージョン、DBパスワード、pleasanterをインストールするサーバのhost名orIPAddress　等
