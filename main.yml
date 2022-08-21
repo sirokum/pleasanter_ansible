@@ -1,0 +1,32 @@
+- hosts: localhost      # 接続先(localhostは、インベントリーになくとも指定可能)
+  gather_facts: false
+  #### 環境に合わせて要編集 ここから
+  vars:
+    use_proxy: off  # Proxy使用時 on 不要 off
+    proxy: http://hoge.foo.bar:80   # Proxy Address 例: http://hoge.foo.bar:8080
+    db_password: sirokuma  # sedで置換の関係から記号は使用不可
+    pleasanter_ver: 1.3.17.1  # 最新バージョンをWebで確認のこと
+    host_name: 10.10.85.87  # 自ホストIPアドレスかhost名を設定
+  #### 要編集 ここまで
+  #### Proxyを使わない場合は以下をコメントアウト
+#  environment:
+#    http_proxy: "{{ proxy }}"
+#    https_proxy: "{{ proxy }}"
+  #### Proxyを使わない場合のコメントアウト　ここまで
+  tasks:
+  
+  - name: "使用する各パッケージをインストール"
+    import_tasks: use_packages.yml
+    
+  - name: ".netのインストール"
+    import_tasks: dotnet.yml
+    
+  - name: "PostgreSQLのインストール"
+    import_tasks: postgresql.yml
+
+  - name: "Pleasanterのインストール"
+    import_tasks: pleasanter.yml
+
+
+
+

@@ -1,0 +1,20 @@
+[Unit]
+Description = Pleasanter
+Documentation =
+Wants=network.target
+After=network.target
+
+[Service]
+ExecStart = /usr/bin/dotnet Implem.Pleasanter.dll
+WorkingDirectory = /web/pleasanter/Implem.Pleasanter
+Restart = always
+RestartSec = 10
+KillSignal=SIGINT
+SyslogIdentifier=dotnet-pleasanter
+User = root
+Group = root
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
+
+[Install]
+WantedBy = multi-user.target

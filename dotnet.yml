@@ -1,0 +1,36 @@
+#- hosts: localhost      # 接続先(localhostは、インベントリーになくとも指定可能)
+#  environment:
+#    http_proxy: http://szpro.inex.zen:80
+#    https_proxy: http://szpro.inex.zen:80
+#  gather_facts: false
+#  tasks:
+
+  - name: apt update
+    apt:
+      update_cache: yes
+  
+  - name: Download "Microsoft Package Repo deb file"
+    get_url: 
+      url: https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb
+      dest: /tmp/packages-microsoft-prod.deb
+#    environment: "{{proxy_env}}"
+#    environment: http_proxy:http://szpro.inex.zen:80
+
+  - name: Install the package "Microsoft packages Repo"
+    apt:
+      deb: /tmp/packages-microsoft-prod.deb
+      state: present
+
+  - name: Install the package "apt-transport-https"
+    apt:
+      name: apt-transport-https
+      state: present
+
+  - name: apt update
+    apt:
+      update_cache: yes
+
+  - name: Install the package "dotnet-sdk-6.0"
+    apt:
+      name: dotnet-sdk-6.0
+      state: present

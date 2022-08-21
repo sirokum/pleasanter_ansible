@@ -1,0 +1,45 @@
+#- hosts: localhost      # 接続先(localhostは、インベントリーになくとも指定可能)
+#  gather_facts: false
+#  vars:
+#    use_proxy: on  # Proxy使用時 on 不要 off
+#    proxy: http://szpro.inex.zen:80/   # Proxy Address 例: http://hoge.foo.bar:8080/
+#  tasks:
+
+  - name: apt update
+    apt:
+      update_cache: yes
+
+  - name: Install the package "wget"
+    apt:
+      name: 
+        - wget
+        - libgdiplus
+        - bash-completion
+        - vim
+        - unzip
+        - nginx
+      state: present
+
+  - name: wget proxy set https
+    lineinfile:
+      dest: /etc/wgetrc
+      regexp: '^https_proxy'
+      line: "https_proxy = {{ proxy }}/"
+      state: present
+    when: use_proxy == 'on'
+
+  - name: wget proxy set http
+    lineinfile:
+      dest: /etc/wgetrc
+      regexp: '^http_proxy'
+      line: "http_proxy = {{ proxy }}/"
+      state: present
+    when: use_proxy == 'on'
+
+  - name: wget proxy set ftp
+    lineinfile:
+      dest: /etc/wgetrc
+      regexp: '^ftp_proxy'
+      line: "ftp_proxy = {{ proxy }}/"
+      state: present
+    when: use_proxy == 'on'

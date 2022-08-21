@@ -1,0 +1,62 @@
+#- hosts: localhost      # 接続先(localhostは、インベントリーになくとも指定可能)
+#  gather_facts: false
+#  vars:
+#    db_password: sirokuma  # sedで置換の関係から記号は使用不可
+#  tasks:
+
+  - name: Set up Postgres 14 repo
+    shell: |
+      wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+      echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" |tee  /etc/apt/sources.list.d/pgdg.list
+    args:
+      warn: no
+
+  - name: apt update
+    apt:
+      update_cache: yes
+
+  - name: Install postgresql
+    apt:
+      name: 
+        - postgresql-14
+        - postgresql-client-14
+      update_cache: yes
+
+  - name: Change scram-sha-256 to md5
+    shell: /bin/sed -i 's/scram-sha-256$/md5/' /etc/postgresql/14/main/pg_hba.conf
+    args:
+      warn: no
+
+  - name: Change postgresql.conf setteings
+    shell: |
+      /bin/sed -i "s/^#log_destination/log_destination/" /etc/postgresql/14/main/postgresql.conf 
+      /bin/sed -i "s/^#logging_collector = off/logging_collector = on/" /etc/postgresql/14/main/postgresql.conf
+      /bin/sed -i "s/^log_line_prefix = '%m \[%p\] %q%u@%d '/log_line_prefix = '\[%t\]%u %d %p\[%l\]'/" /etc/postgresql/14/main/postgresql.conf
+    args:
+      warn: no
+
+  - name: Restart Postgresql
+    systemd:
+      name: postgresql
+      state: restarted
+      enabled: yes
+
+  - name: Change db_password on SQL
+    shell: |
+      /bin/sed -i "s/dbpassword/{{ db_password }}/" create_db.sql
+    args:
+      warn: no
+
+  - name: Create the database "create_db.sql"
+    become: true
+    become_user: postgres
+    shell: psql < create_db.sql
+
+  - name: reset db_password on SQL
+    shell: |
+      /bin/sed -i "s/{{ db_password }}/dbpassword/" create_db.sql
+    args:
+      warn: no
+
+
+

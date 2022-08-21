@@ -1,0 +1,84 @@
+#- hosts: localhost      # 接続先(localhostは、インベントリーになくとも指定可能)
+#  environment:
+#    http_proxy: http://szpro.inex.zen:80
+#    https_proxy: http://szpro.inex.zen:80
+#  vars: 
+#    pleasanter_ver: 1.3.17.1
+#    db_password: S250915
+#    host_name: 192.168.150.131
+#  gather_facts: false
+#  tasks:
+ 
+  - name: Creates directory
+    file:
+      path: /web
+      state: directory
+ 
+  - name: Download Pleasanter
+    unarchive: 
+      src: "https://github.com/Implem/Implem.Pleasanter.NetCore/releases/download/Pleasanter_{{ pleasanter_ver }}/Pleasanter_{{ pleasanter_ver }}.zip"
+      dest: /web/
+      remote_src: yes
+#    ignore_errors: yes
+
+  - name: Change Rds.json setteings
+    shell: |
+      /bin/sed -i "s/SetSaPWD/{{ db_password }}/" /web/pleasanter/Implem.Pleasanter/App_Data/Parameters/Rds.json
+    args:
+      warn: no
+
+  - name: CodeDefinerの実行
+    shell: |
+      dotnet Implem.CodeDefiner.dll _rds
+    args:
+      chdir: /web/pleasanter/Implem.CodeDefiner
+
+  - name: systemctlにpleasanter.serviceを登録
+    copy:
+      src: pleasanter.service
+      dest: /etc/systemd/system/pleasanter.service
+
+  - name: Start_enable Pleasanter
+    systemd:
+      name: pleasanter
+      daemon_reload: yes
+      state: started
+      enabled: yes
+
+  - name: Nginxにpleasanter.confを登録
+    copy:
+      src: pleasanter.conf
+      dest: /etc/nginx/conf.d/pleasanter.conf
+
+  - name: Change pleasanter.conf setteings
+    shell: |
+      /bin/sed -i "s/hostname/{{ host_name }}/" /etc/nginx/conf.d/pleasanter.conf
+    args:
+      warn: no
+
+  - name: restart Nginx
+    systemd:
+      name: nginx
+      state: restarted
+      enabled: yes
+
+  - name: ufw allow http
+    ufw:
+      rule: allow
+      port: '80'
+
+  - name: ufw allow http
+    ufw:
+      rule: allow
+      port: '22'
+
+  - name: enable ufw
+    ufw:
+      state: enabled
+
+
+
+
+
+
+
