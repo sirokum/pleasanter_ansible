@@ -22,3 +22,19 @@ sudo apt install ansible
 pleasanterのバージョン、DBパスワード、pleasanterをインストールするサーバのhost名orIPAddress　等
 社内LAN等でProxy経由が必要な場合はそちらも設定
 - sudo suコマンドでルートユーザにスイッチ
+- Ansibleでmain.ymlを読み込み実行
+```
+sudo su
+ansible-playbook main.yml
+```
+- Webブラウザから```http://インストールサーバhost名orIPAdress```でアクセス
+- 初期ユーザはID:Administrator、PW:pleasanterでアクセス
+
+#### 注意事項
+"プリザンターをUbuntuにインストールする"ページ内容との相違点は
+- OSのpostgresユーザにパスワードを設定していない
+- ufwコマンドでport:22も通信許可している（ssh接続を許可）
+- PostgreSQLの設定は外部からの接続を許可する設定```listen_addresses = '*'```としていますがufwコマンドでport:5432の通信許可はしていません
+必要な場合はpg_hba.confの内容と共に適宜対応をしてください。
+
+以上のことからあくまで内部でのお試し用Pleasanterを構築するためとして、本番環境を構築するのには適さないのをご承知ください
