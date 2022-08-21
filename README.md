@@ -3,7 +3,7 @@
 
 Implem社のOSS"Pleasanter"をインストールするためのAnsibleです
 
-[プリザンターをUbuntuにインストールする]([URL](https://pleasanter.org/manual/getting-started-pleasanter-ubuntu) "プリザンターをUbuntuにインストールする")ページの内容を自動実行するためだけのものになっています
+[プリザンターをUbuntuにインストールする](https://pleasanter.org/manual/getting-started-pleasanter-ubuntu "プリザンターをUbuntuにインストールする")ページの内容を自動実行するためだけのものになっています
 
 
 #### 前提条件
@@ -31,7 +31,7 @@ ansible-playbook main.yml
 - 初期ユーザはID:Administrator、PW:pleasanterでアクセス
 
 #### 注意事項
-[プリザンターをUbuntuにインストールする]([URL](https://pleasanter.org/manual/getting-started-pleasanter-ubuntu) "プリザンターをUbuntuにインストールする")ページ内容との相違点は
+[プリザンターをUbuntuにインストールする](https://pleasanter.org/manual/getting-started-pleasanter-ubuntu "プリザンターをUbuntuにインストールする")ページ内容との相違点は
 - OSのpostgresユーザにパスワードを設定していない
 - ufwコマンドでport:22も通信許可している（ssh接続を許可）
 - PostgreSQLの設定は外部からの接続を許可する設定```listen_addresses = '*'```としていますがufwコマンドでport:5432の通信許可はしていません
